@@ -49,3 +49,125 @@ combined_df.replace([np.inf, -np.inf, np.nan], -1, inplace=True)  # Handling mis
 le = preprocessing.LabelEncoder()
 combined_df[string_features] = combined_df[string_features].apply(lambda col: le.fit_transform(col))
 ```
+
+#### Address Class Imbalance
+
+To address class imbalance between benign and malicious traffic, undersampling is applied:
+
+```python
+benign_included_max = attack_total / 30 * 70  # 70% benign, 30% attacks
+benign_inc_probability = (benign_included_max / benign_total) * enlargement
+
+indexes = []
+for index, row in combined_df.iterrows():
+    if row['Label'] != "BENIGN":
+        indexes.append(index)
+    else:
+        if random.random() > benign_inc_probability: continue
+        if benign_included_count > benign_included_max: continue
+        benign_included_count += 1
+        indexes.append(index)
+
+df_balanced = combined_df.loc[indexes]
+df_balanced.to_csv("web_attacks_balanced.csv", index=False)
+```
+
+#### Model Training
+
+You can train a **Decision Tree** and **Random Forest** classifier with the following code:
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+decision_tree = DecisionTreeClassifier(max_leaf_nodes=5, random_state=0)
+decision_tree.fit(X_train, y_train)
+
+# For Random Forest
+from sklearn.ensemble import RandomForestClassifier
+rf = RandomForestClassifier(n_estimators=250, random_state=42)
+rf.fit(X_train, y_train)
+```
+
+#### Hyperparameter Tuning
+
+Hyperparameter tuning can be performed using `GridSearchCV` or `RandomizedSearchCV`:
+
+```python
+from sklearn.model_selection import GridSearchCV
+
+parameters = {
+    'n_estimators': [10],
+    'min_samples_leaf': [3],
+    'max_features': [3],
+    'max_depth': [3, 5, 10, 20]
+}
+
+gcv = GridSearchCV(rfc, parameters, scoring='f1', cv=5, return_train_score=True, n_jobs=-1)
+gcv.fit(X_train, y_train)
+```
+
+#### Model Evaluation
+
+Evaluate the model's performance using confusion matrices, accuracy, precision, recall, and F1-score:
+
+```python
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+
+y_pred = rfc.predict(X_test)
+cm = confusion_matrix(y_test, y_pred)
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred, average='macro')
+recall = recall_score(y_test, y_pred, average='macro')
+f1 = f1_score(y_test, y_pred, average='macro')
+
+print(f"Accuracy: {accuracy}, Precision: {precision}, Recall: {recall}, F1 Score: {f1}")
+```
+
+#### Visualizing the Decision Tree
+
+Visualize the decision tree structure:
+
+```python
+from graphviz import Source
+from sklearn import tree
+
+dot_data = tree.export_graphviz(decision_tree, out_file=None, feature_names=X_train.columns, filled=True)
+graph = Source(dot_data)
+graph.render("decision_tree")  # Save the graph
+```
+
+#### Feature Importance
+
+To identify the most important features contributing to intrusion detection:
+
+```python
+importances = rf.feature_importances_
+indices = np.argsort(importances)[::-1]
+
+for index, i in enumerate(indices[:10]):
+    print(f'{index + 1}.\tFeature {i}\tImportance {importances[i]:.3f}')
+```
+
+#### Model Persistence
+
+To save the trained model for future use:
+
+```python
+import pickle
+with open('webattack_detection_rf_model.pkl', 'wb') as f:
+    pickle.dump(rf, f)
+```
+
+---
+
+
+## Future Work
+
+- **Expand Feature Set**: Additional features like flow-based statistics can be added to improve detection accuracy.
+- **Real-Time Detection**: Extend the system to detect intrusions in real-time cloud environments.
+- **Model Deployment**: The trained model can be deployed as part of a microservice to monitor network traffic in real time.
+
+---
+
+## Conclusion
+
+This project provides a robust foundation for building a hybrid intrusion detection system using machine learning. The system is designed to detect various types of web attacks, including zero-day vulnerabilities, in cloud environments while balancing accuracy and resource efficiency.
