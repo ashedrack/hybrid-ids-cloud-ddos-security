@@ -3,9 +3,9 @@
 ## Overview
 
 This project is focused on developing a **Hybrid Intrusion Detection System (IDS)** that utilizes machine learning algorithms to detect various network intrusions, including Distributed Denial of Service (DDoS) attacks. The IDS combines signature-based detection with anomaly-based detection to improve detection rates of both known and zero-day attacks.
-
-The code includes several key stages: data preprocessing, feature selection, model training (with Decision Trees and Random Forest), hyperparameter tuning using GridSearchCV, and model evaluation. 
-
+The system will utilize the CICIDS 2017 dataset, which is publicly available and widely used for evaluating intrusion detection systems. This dataset contains real-world attack scenarios, such as Distributed Denial of Service (DDoS), brute force attacks, and infiltration, simulating the behavior of both normal and malicious network traffic across various protocols. The dataset is organized into eight separate files, each corresponding to a different day of observation, capturing diverse attack vectors and benign traffic. Both PCAP and CSV formats are provided, enabling comprehensive traffic analysis and feature extraction.
+The dataset is publicly accessible via the following  Canadian Institute for Cybersecurity- dataset description page https://www.unb.ca/cic/datasets/ids-2017.html, and the archive used for training can be downloaded here -  Dataset Record Form.
+Key insights from the CICIDS 2017 dataset show that it contains diverse attack traces, including DoS, Web Attacks, Infiltration, and DDoS, covering both benign and malicious traffic. The dataset, with its various protocols like HTTP, FTP, SSH, and email, provides a comprehensive foundation for detecting multi-protocol attacks in cloud environments.
 
 ### 2. Dataset Preparation
 
