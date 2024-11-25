@@ -37,7 +37,7 @@ if st.button("Predict 🚀"):
 
     # Send POST request to FastAPI
     try:
-        response = requests.post("http://127.0.0.1:8000/predict", json=input_data)
+        response = requests.post("https://hybrid-ids-cloud-ddos-security-2.onrender.com/predict", json=input_data)
 
         # Parse response
         if response.status_code == 200:
