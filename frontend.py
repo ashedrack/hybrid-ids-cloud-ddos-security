@@ -14,7 +14,7 @@ st.markdown(
     .animated-text {
         text-align: center;
         font-size: medium;
-        animation: fadeIn 2s ease-in-out;
+        animation: fadeIn 8s ease-in-out;
     }
     </style>
     <div class="animated-text">
