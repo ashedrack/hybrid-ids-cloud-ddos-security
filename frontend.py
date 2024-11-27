@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+from datetime import datetime
 
 # Streamlit app title
 st.title("📡 INTRUSION DETECTION SYSTEM")
@@ -43,7 +44,24 @@ if st.button("Predict 🚀"):
         if response.status_code == 200:
             prediction = response.json()
             prediction_label = "🔴 Attack" if prediction["RF_Prediction"] == 1 else "🟢 Normal"
-            st.success(f"Model Prediction: {prediction_label}")
+            severity = prediction.get("Severity", "low")  # Default to "low" if Severity key is not present
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            # Display results
+            st.success(f"**Model Prediction:** {prediction_label}")
+            #st.write(f"**Severity Level:** {severity.capitalize()}")
+            st.write(f"**Timestamp:** {timestamp}")
+
+            # Custom status messages based on severity level
+            if prediction["RF_Prediction"] == 1:
+                if severity.lower() == "high":
+                    st.error("🔴 **High severity intrusion detected! Immediate action is required to mitigate potential risks.**")
+                elif severity.lower() == "high":
+                    st.info("🔴 **High severity intrusion detected! Immediate action is required to mitigate potential risks.**")
+                else:
+                    st.warning("🔴 **High severity intrusion detected! Immediate action is required to mitigate potential risks.**")
+            else:
+                st.success("✅ No intrusion detected. The network is secure.")
         else:
             st.error(f"Error from API: {response.status_code} - {response.text}")
     except requests.exceptions.RequestException as e:
