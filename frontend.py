@@ -4,7 +4,26 @@ from datetime import datetime
 
 # Streamlit app title
 st.title("📡 INTRUSION DETECTION SYSTEM")
-st.write("### A Machine Learning-powered tool to detect network intrusions.")
+st.markdown(
+    """
+    <style>
+    @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+    .animated-text {
+        text-align: center;
+        font-size: medium;
+        animation: fadeIn 2s ease-in-out;
+    }
+    </style>
+    <div class="animated-text">
+        A Machine Learning-powered system to detect DDoS attacks & other network intrusions.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 st.markdown("---")
 
 # User input fields for the selected 10 features
@@ -68,4 +87,4 @@ if st.button("Predict 🚀"):
         st.error(f"Request failed: {e}")
 
 st.markdown("---")
-st.write("💡 **Note**: This tool uses advanced machine learning algorithms to predict network intrusions.")
+st.write("💡 **Note**: This tool uses advanced machine learning algorithms to predict DDoS and other network intrusions.")
